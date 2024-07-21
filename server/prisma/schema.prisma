@@ -106,8 +106,8 @@ model umForgotPassword {
 
 model umFunctionalities {
   funcId                  Int                      @id @default(autoincrement()) @map("func_id")
-  funcName                String?                  @map("func_name") @db.VarChar(100)
-  endpointUrl             String?                  @map("endpoint_url") @db.VarChar(255)
+  funcName                String                  @map("func_name") @db.VarChar(100)
+  endpointUrl             String                  @map("endpoint_url") @db.VarChar(255)
   pfuncId                 Int?                     @map("pfunc_id")
   umParentFunctionalities umParentFunctionalities? @relation(fields: [pfuncId], references: [pfuncId], map: "um_functionalities_parent_fk")
   umSiteSetting           umSiteSetting[]
