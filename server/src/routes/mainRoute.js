@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
+
+const paymentRoute = require("./paymentRoute");
 const functionalitiesRoute = require("./functionalitiesRoute");
 
 //==============================================================//
-//                    Sample Main Routes                        //
+//                          Routes                              //
 //==============================================================//
 
-// Functionalities Route
+// Payment Routes
+router.use("/payment", paymentRoute);
+// Functionalities Routes
 router.use("/functionalities", functionalitiesRoute);
 
 module.exports = router;
