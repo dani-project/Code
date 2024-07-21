@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const userRoute = require("./userRoute");
+
+const paymentRoute = require("./paymentRoute");
 
 //==============================================================//
-//                    Sample Main Routes                        //
+//                          Routes                              //
 //==============================================================//
 
-// User Route
-router.use("/users", userRoute);
+// Payment Routes
+router.use("/payment", paymentRoute);
+
 
 module.exports = router;

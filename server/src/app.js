@@ -12,6 +12,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const mainRoutes = require("./routes/mainRoute");
-app.use("/api", mainRoutes);
+app.use("/site", mainRoutes);
 
 module.exports = app;
