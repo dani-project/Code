@@ -109,7 +109,7 @@ model umFunctionalities {
   funcName                String                  @map("func_name") @db.VarChar(100)
   endpointUrl             String                  @map("endpoint_url") @db.VarChar(255)
   pfuncId                 Int?                     @map("pfunc_id")
-  umParentFunctionalities umParentFunctionalities? @relation(fields: [pfuncId], references: [pfuncId], map: "um_functionalities_parent_fk")
+  umParentFunctionalities umParentFunctionalities? @relation(fields: [pfuncId], references: [pfuncId], onDelete: "SET NULL", map: "um_functionalities_parent_fk")
   umSiteSetting           umSiteSetting[]
 
   @@map("um_functionalities")
