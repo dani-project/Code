@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const userRoute = require("./userRoute");
-
+const featureRoute = require("./featureRoute");
+const pfuncRoute = require("./pfuncRoute");
 //==============================================================//
-//                    Sample Main Routes                        //
+//                    Main Routes                        //
 //==============================================================//
 
-// User Route
-router.use("/users", userRoute);
+// Feature Routes
+router.use("/feature", featureRoute);
+// Parent Functionalities Routes
+router.use("/pfunc", pfuncRoute);
 
 module.exports = router;
