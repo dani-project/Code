@@ -3,6 +3,7 @@ const router = express.Router();
 
 const paymentRoute = require("./paymentRoute");
 const functionalitiesRoute = require("./functionalitiesRoute");
+const settingRoute = require("./siteSettingRoute");
 
 //==============================================================//
 //                          Routes                              //
@@ -12,5 +13,7 @@ const functionalitiesRoute = require("./functionalitiesRoute");
 router.use("/payment", paymentRoute);
 // Functionalities Routes
 router.use("/functionalities", functionalitiesRoute);
+// Site Setting Routes
+router.use("/setting", settingRoute);
 
 module.exports = router;

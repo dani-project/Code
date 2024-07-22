@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const functionalitiesController = require("../controllers/functionalitiesController");
 
-// "/site"
+// "/site/functionalities"
+
 router.post("/", functionalitiesController.createFunctionality);
 router.get("/", functionalitiesController.getAllFunctionalities);
 router.get("/:funcId", functionalitiesController.getFunctionalityById);

@@ -5,7 +5,7 @@ module.exports.createFunctionality = async (req, res) => {
   try {
     const { funcName, endpointUrl, pfuncId } = req.body;
     if (!funcName || !endpointUrl) {
-      return res.status(400).json({ message: "Function name or endpoint url is missing" });
+      return res.status(400).json({ message: "funcName and endpointUrl Required!" });
     }
 
     const newFunctionality = await functionalitiesModel.createFunctionality({
@@ -95,7 +95,7 @@ module.exports.updateFunctionality = async (req, res) => {
     const updateData = req.body;
 
     if (!updateData || Object.keys(updateData).length === 0) {
-      return res.status(400).json({ message: "Function name or endpoint url is missing" });
+      return res.status(400).json({ message: "funcName and endpointUrl Required!" });
     }
 
     const updatedFunctionality = await functionalitiesModel.updateFunctionality(parseInt(funcId), updateData);
