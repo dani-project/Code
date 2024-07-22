@@ -40,7 +40,22 @@ router.delete("/name/:name", paymentController.deletePaymentMethodByName);
 router.delete("/:id", paymentController.checkPaymentMethodExistenceByID, paymentController.deletePaymentMethodByID);
 
 
+// Create: Link a payment method to a site by adding site_id and payment_method_id. 
+// POST /site/payment/link
+// Body: siteID, paymentMethodID
+// Middleware: Checks if Site ID exists, payment method ID exists
+router.post("/link", paymentController.checkSiteExistenceByID, paymentController.checkPaymentMethodExistenceByIDInBody, paymentController.linkPaymentMethodToSite)
 
+// Get Site payment methods
+// Read: Retrieve details of site payments by site_id and payment_method_id. 
+// GET /site/payment/sitePaymentMethod/:id
+router.get("/sitePaymentMethod/:id", paymentController.getSitePaymentMethodsBySiteID);
+
+
+// Delete: Unlink a payment method from site
+// DELETE /site/payment/link
+// Body: siteID, paymentMethodID
+router.delete("/link",  paymentController.checkSiteExistenceByID, paymentController.checkSitePaymentMethodExistence, paymentController.deletePaymentMethodFromSite);
 
 
 

@@ -75,7 +75,7 @@ module.exports.deletePaymentMethodByID = async (id) => {
     return method;
 };
 
-// delete an existing Payment Method
+// Delete an existing Payment Method
 module.exports.deletePaymentMethodByName = async (name) => {
     const deletedResult = await prisma.$executeRaw`
     DELETE FROM "um_payment_method"
@@ -83,4 +83,50 @@ module.exports.deletePaymentMethodByName = async (name) => {
     `;
 
     return deletedResult;
+};
+
+// Post: Link payment method to Site
+module.exports.linkPaymentMethodToSite = async (siteId, paymentMethodId) => {
+    return await prisma.umSitePayment.create({
+        data: {
+            siteId: siteId,
+            paymentMethodId: paymentMethodId
+        }
+    });
+};
+
+
+
+// Get payment methods by site ID
+module.exports.getSitePaymentMethods = async (id) => {
+    return await prisma.umSitePayment.findMany({
+        where: {
+            siteId: id
+        },
+        include: {
+            paymentMethod: true
+        }
+    });
+};
+
+
+// Get a specific payment methods linked with site
+module.exports.getSpecificSitePaymentMethod = async (siteId, paymentMethodId) => {
+    return await prisma.umSitePayment.findFirst({
+        where: {
+            siteId: siteId,
+            paymentMethodId: paymentMethodId
+        },
+    });
+};
+
+
+// Delete a specific payment method linked with site
+module.exports.deletePaymentMethodFromSite = async (siteId, paymentMethodId) => {
+    return await prisma.umSitePayment.deleteMany({
+        where: {
+            siteId: siteId,
+            paymentMethodId: paymentMethodId
+        },
+    });
 };
