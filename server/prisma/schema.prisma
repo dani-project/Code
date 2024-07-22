@@ -7,3 +7,698 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model umAlbum {
+  albumId                   Int                         @id @default(autoincrement()) @map("album_id")
+  galleryId                 Int?                        @map("gallery_id")
+  statusId                  Int?                        @map("status_id")
+  albumName                 String                      @unique @map("album_name") @db.VarChar(50)
+  albumDescription          String                      @map("album_description")
+  createdAt                 DateTime?                   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                 DateTime?                   @default(now()) @map("updated_at") @db.Timestamp(6)
+  umGallery                 umGallery?                  @relation(fields: [galleryId], references: [galleryId], onDelete: Cascade, map: "fk_um_album_um_gallery")
+  umStatus                  umStatus?                   @relation(fields: [statusId], references: [statusId], map: "fk_um_album_um_status")
+  umImage                   umImage[]
+  umUserAlbumRolePermission umUserAlbumRolePermission[]
+
+  @@map("um_album")
+}
+
+model umAuthentication {
+  authId          Int             @id @default(autoincrement()) @map("auth_id")
+  userId          Int             @map("user_id")
+  siteId          Int             @map("site_id")
+  password        String?         @db.VarChar(72)
+  providerId      Int             @map("provider_id")
+  accessToken     String          @map("access_token") @db.VarChar(550)
+  refreshToken    String          @map("refresh_token") @db.VarChar(550)
+  emailVerifiedAt DateTime?       @map("email_verified_at") @db.Timestamp(6)
+  twoFaEnabledAt  DateTime?       @map("two_fa_enabled_at") @db.Timestamp(6)
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime?       @map("updated_at") @db.Timestamp(6)
+  umOauthProvider umOauthProvider @relation(fields: [providerId], references: [providerId], onDelete: Cascade, map: "fk_provider_id")
+  umSite          umSite          @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_site_id")
+  umUser          umUser          @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_user_id")
+  umRequest       umRequest[]
+
+  @@map("um_authentication")
+}
+
+model umCreationLog {
+  logId     Int       @id @default(autoincrement()) @map("log_id")
+  userId    Int?      @map("user_id")
+  siteId    Int?      @map("site_id")
+  tableName String?   @map("table_name") @db.VarChar(50)
+  recordId  String?   @map("record_id") @db.VarChar(50)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  umSite    umSite?   @relation(fields: [siteId], references: [siteId], onDelete: NoAction, onUpdate: NoAction, map: "fk_creation_site_id")
+  umUser    umUser?   @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_creation_user_id")
+
+  @@map("um_creation_log")
+}
+
+model umDeletionLog {
+  logId     Int       @id @default(autoincrement()) @map("log_id")
+  userId    Int?      @map("user_id")
+  siteId    Int?      @map("site_id")
+  tableName String?   @map("table_name") @db.VarChar(50)
+  recordId  String?   @map("record_id") @db.VarChar(50)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  umSite    umSite?   @relation(fields: [siteId], references: [siteId], onDelete: NoAction, onUpdate: NoAction, map: "fk_deletion_site_id")
+  umUser    umUser?   @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_deletion_user_id")
+
+  @@map("um_deletion_log")
+}
+
+model umDeletionLogDetail {
+  fieldModificationId Int     @id @default(autoincrement()) @map("field_modification_id")
+  logId               Int?    @unique @map("log_id")
+  fieldName           String? @map("field_name") @db.VarChar(50)
+  oldValue            Json?   @map("old_value")
+
+  @@map("um_deletion_log_detail")
+}
+
+model umFeature {
+  featureId               Int                       @id @default(autoincrement()) @map("feature_id")
+  featureName             String?                   @map("feature_name") @db.VarChar(100)
+  umParentFunctionalities umParentFunctionalities[]
+
+  @@map("um_feature")
+}
+
+model umFileType {
+  fileTypeId   Int       @id @default(autoincrement()) @map("file_type_id")
+  fileTypeName String    @unique @map("file_type_name") @db.VarChar(50)
+  umImage      umImage[]
+
+  @@map("um_file_type")
+}
+
+model umForgotPassword {
+  forgotPasswordId   Int       @id @default(autoincrement()) @map("forgot_password_id")
+  forgotPasswordCode String?   @map("forgot_password_code") @db.VarChar(6)
+  createdOn          DateTime? @default(now()) @map("created_on") @db.Timestamp(6)
+  userId             Int?      @map("user_id")
+  umUser             umUser?   @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_forgot_password_user_id")
+
+  @@map("um_forgot_password")
+}
+
+model umFunctionalities {
+  funcId                  Int                      @id @default(autoincrement()) @map("func_id")
+  funcName                String                  @map("func_name") @db.VarChar(100)
+  endpointUrl             String                  @map("endpoint_url") @db.VarChar(255)
+  pfuncId                 Int?                     @map("pfunc_id")
+  umParentFunctionalities umParentFunctionalities? @relation(fields: [pfuncId], references: [pfuncId], map: "um_functionalities_parent_fk")
+  umSiteSetting           umSiteSetting[]
+
+  @@map("um_functionalities")
+}
+
+model umGallery {
+  galleryId                   Int                           @id @default(autoincrement()) @map("gallery_id")
+  galleryName                 String                        @map("gallery_name") @db.VarChar(50)
+  galleryDescription          String                        @map("gallery_description")
+  createdAt                   DateTime?                     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                   DateTime?                     @default(now()) @map("updated_at") @db.Timestamp(6)
+  umAlbum                     umAlbum[]
+  umSiteGalleryRolePermission umSiteGalleryRolePermission[]
+  umUserGalleryRolePermission umUserGalleryRolePermission[]
+
+  @@map("um_gallery")
+}
+
+model umGroup {
+  groupId          Int               @id @default(autoincrement()) @map("group_id")
+  groupName        String?           @map("group_name") @db.VarChar(64)
+  groupDescription String?           @map("group_description")
+  umSiteUserGroup  umSiteUserGroup[]
+
+  @@map("um_group")
+}
+
+model umImage {
+  imageId                   Int                         @id @default(autoincrement()) @map("image_id")
+  albumId                   Int?                        @map("album_id")
+  fileTypeId                Int?                        @map("file_type_id")
+  statusId                  Int?                        @map("status_id")
+  providerId                Int?                        @map("provider_id")
+  imageName                 String                      @map("image_name") @db.VarChar(50)
+  publicId                  Int                         @map("public_id")
+  imagePath                 String                      @map("image_path")
+  createdAt                 DateTime?                   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                 DateTime?                   @default(now()) @map("updated_at") @db.Timestamp(6)
+  umAlbum                   umAlbum?                    @relation(fields: [albumId], references: [albumId], onDelete: Cascade, map: "fk_um_image_um_album")
+  umFileType                umFileType?                 @relation(fields: [fileTypeId], references: [fileTypeId], onDelete: Restrict, map: "fk_um_image_um_file_type")
+  umProvider                umProvider?                 @relation(fields: [providerId], references: [providerId], onDelete: Restrict, map: "fk_um_image_um_provider")
+  umStatus                  umStatus?                   @relation(fields: [statusId], references: [statusId], map: "fk_um_image_um_status")
+  umImageTags               umImageTags[]
+  umUserImageRolePermission umUserImageRolePermission[]
+
+  @@map("um_image")
+}
+
+model umImageTags {
+  imageTagId Int     @map("image_tag_id")
+  imageId    Int     @map("image_id")
+  tagId      Int     @map("tag_id")
+  umImage    umImage @relation(fields: [imageId], references: [imageId], onDelete: Cascade, map: "fk_um_image_tags_um_image")
+  umTags     umTags  @relation(fields: [tagId], references: [tagId], onDelete: SetNull, map: "fk_um_image_tags_um_tags")
+
+  @@id([imageTagId, imageId, tagId])
+  @@map("um_image_tags")
+}
+
+model umInvitedUser {
+  userSiteRolePermissionId Int       @id @default(autoincrement()) @map("user_site_role_permission_id")
+  invitedKey               String?   @map("invited_key") @db.VarChar(6)
+  statusId                 Int?      @map("status_id")
+  createdOn                DateTime? @default(now()) @map("created_on") @db.Timestamp(6)
+  updatedOn                DateTime? @default(now()) @map("updated_on") @db.Timestamp(6)
+  umStatus                 umStatus? @relation(fields: [statusId], references: [statusId], onDelete: Restrict, map: "fk_invited_user_status_id")
+
+  @@map("um_invited_user")
+}
+
+model umModificationLog {
+  logId     Int       @id @default(autoincrement()) @map("log_id")
+  userId    Int?      @map("user_id")
+  siteId    Int?      @map("site_id")
+  tableName String?   @map("table_name") @db.VarChar(50)
+  recordId  String?   @map("record_id") @db.VarChar(50)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  umSite    umSite?   @relation(fields: [siteId], references: [siteId], onDelete: NoAction, onUpdate: NoAction, map: "fk_modification_site_id")
+  umUser    umUser?   @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_modification_user_id")
+
+  @@map("um_modification_log")
+}
+
+model umModificationLogDetail {
+  fieldModificationId Int     @id @default(autoincrement()) @map("field_modification_id")
+  logId               Int?    @unique @map("log_id")
+  fieldName           String? @map("field_name") @db.VarChar(50)
+  oldValue            Json?   @map("old_value")
+
+  @@map("um_modification_log_detail")
+}
+
+model umNotificationCategory {
+  categoryId         Int                  @id @default(autoincrement()) @map("category_id")
+  categoryName       String?              @map("category_name") @db.VarChar(50)
+  umUserNotification umUserNotification[]
+
+  @@map("um_notification_category")
+}
+
+model umNotificationType {
+  typeId             Int                  @id @default(autoincrement()) @map("type_id")
+  typeName           String?              @map("type_name") @db.VarChar(50)
+  umUserNotification umUserNotification[]
+
+  @@map("um_notification_type")
+}
+
+model umOauthKey {
+  keyId           Int             @id @default(autoincrement()) @map("key_id")
+  siteId          Int             @map("site_id")
+  providerId      Int             @map("provider_id")
+  clientId        String          @map("client_id") @db.VarChar(128)
+  clientSecret    String          @map("client_secret") @db.VarChar(128)
+  umOauthProvider umOauthProvider @relation(fields: [providerId], references: [providerId], onDelete: Cascade, map: "fk_provider_id")
+  umSite          umSite          @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_site_id")
+
+  @@map("um_oauth_key")
+}
+
+model umOauthProvider {
+  providerId       Int                @id @default(autoincrement()) @map("provider_id")
+  providerName     String             @map("provider_name") @db.VarChar(8)
+  umAuthentication umAuthentication[]
+  umOauthKey       umOauthKey[]
+
+  @@map("um_oauth_provider")
+}
+
+model umParentFunctionalities {
+  pfuncId           Int                 @id @default(autoincrement()) @map("pfunc_id")
+  pfuncName         String?             @map("pfunc_name") @db.VarChar(100)
+  featureId         Int?                @map("feature_id")
+  umFunctionalities umFunctionalities[]
+  umFeature         umFeature?          @relation(fields: [featureId], references: [featureId], map: "um_parent_functionalities_feature_fk")
+
+  @@map("um_parent_functionalities")
+}
+
+model umPaymentMethod {
+  paymentMethodId   Int             @id @default(autoincrement()) @map("payment_method_id")
+  paymentMethodName String          @map("payment_method_name") @db.VarChar(20)
+  umSitePayment     umSitePayment[]
+
+  @@map("um_payment_method")
+}
+
+model umPermission {
+  permissionId     Int                @id @default(autoincrement()) @map("permission_id")
+  readAccess       Boolean?           @map("read_access")
+  updateAccess     Boolean?           @map("update_access")
+  createAccess     Boolean?           @map("create_access")
+  deleteAccess     Boolean?           @map("delete_access")
+  umRolePermission umRolePermission[]
+
+  @@map("um_permission")
+}
+
+model umProvider {
+  providerId     Int              @id @default(autoincrement()) @map("provider_id")
+  providerName   String           @unique @map("provider_name") @db.VarChar(50)
+  umImage        umImage[]
+  umProviderSite umProviderSite[]
+
+  @@map("um_provider")
+}
+
+model umProviderSite {
+  providerId          Int        @map("provider_id")
+  siteId              Int        @map("site_id")
+  apiKey              String     @map("api_key") @db.VarChar(255)
+  providerDescription String     @map("provider_description")
+  umProvider          umProvider @relation(fields: [providerId], references: [providerId], map: "fk_um_provider_site_um_provider")
+  umSite              umSite     @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_um_provider_site_um_site")
+
+  @@id([providerId, siteId])
+  @@map("um_provider_site")
+}
+
+model umReport {
+  reportId          Int            @id @default(autoincrement()) @map("report_id")
+  reportType        String?        @map("report_type") @db.VarChar(20)
+  reportTitle       String?        @map("report_title") @db.VarChar(100)
+  reportDescription String?        @map("report_description")
+  reportQuery       String?        @map("report_query")
+  filePath          String?        @map("file_path")
+  fileName          String?        @map("file_name")
+  createdAt         DateTime?      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime?      @default(now()) @map("updated_at") @db.Timestamp(6)
+  umSiteReport      umSiteReport[]
+
+  @@map("um_report")
+}
+
+model umRequest {
+  requestId        Int              @id @default(autoincrement()) @map("request_id")
+  serviceId        Int              @map("service_id")
+  userId           Int              @map("user_id")
+  siteId           Int              @map("site_id")
+  authId           Int              @map("auth_id")
+  code             String           @db.VarChar(8)
+  used             Boolean
+  createdAt        DateTime         @map("created_at") @db.Timestamp(6)
+  umAuthentication umAuthentication @relation(fields: [authId], references: [authId], onDelete: Cascade, map: "fk_auth_id")
+  umService        umService        @relation(fields: [serviceId], references: [serviceId], onDelete: Cascade, map: "fk_service_id")
+  umSite           umSite           @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_site_id")
+
+  @@map("um_request")
+}
+
+model umRequestLog {
+  logId          Int       @id @default(autoincrement()) @map("log_id")
+  userId         Int?      @map("user_id")
+  siteId         Int?      @map("site_id")
+  requestMethod  String?   @map("request_method") @db.VarChar(10)
+  apiRequested   Json?     @map("api_requested")
+  userIp         String?   @map("user_ip") @db.VarChar(16)
+  userOs         String?   @map("user_os") @db.VarChar(10)
+  requestSuccess Boolean?  @map("request_success")
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  umSite         umSite?   @relation(fields: [siteId], references: [siteId], onDelete: NoAction, onUpdate: NoAction, map: "fk_request_site_id")
+  umUser         umUser?   @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_request_user_id")
+
+  @@map("um_request_log")
+}
+
+model umResetType {
+  resetTypeId Int           @id @default(autoincrement()) @map("reset_type_id")
+  resetMethod String?       @unique @map("reset_method") @db.VarChar(255)
+  umResetUser umResetUser[]
+
+  @@map("um_reset_type")
+}
+
+model umResetUser {
+  resetUserId Int          @id @default(autoincrement()) @map("reset_user_id")
+  createdOn   DateTime?    @default(now()) @map("created_on") @db.Timestamp(6)
+  resetTypeId Int?         @map("reset_type_id")
+  userId      Int?         @map("user_id")
+  umResetType umResetType? @relation(fields: [resetTypeId], references: [resetTypeId], onDelete: Cascade, map: "fk_reset_user_reset_id")
+  umUser      umUser?      @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_reset_user_user_id")
+
+  @@map("um_reset_user")
+}
+
+model umRole {
+  roleId           Int                @id @default(autoincrement()) @map("role_id")
+  roleName         String             @map("role_name") @db.VarChar(50)
+  roleType         String             @map("role_type") @db.VarChar(50)
+  roleDescription  String             @map("role_description")
+  umRolePermission umRolePermission[]
+
+  @@map("um_role")
+}
+
+model umRolePermission {
+  rolePermissionId            Int                           @id @default(autoincrement()) @map("role_permission_id")
+  roleId                      Int?                          @map("role_id")
+  permissionId                Int?                          @map("permission_id")
+  umPermission                umPermission?                 @relation(fields: [permissionId], references: [permissionId], onDelete: Restrict, map: "fk_um_role_permission_um_permission")
+  umRole                      umRole?                       @relation(fields: [roleId], references: [roleId], onDelete: Restrict, map: "fk_um_role_permission_um_role")
+  umSiteGalleryRolePermission umSiteGalleryRolePermission[]
+  umUserAlbumRolePermission   umUserAlbumRolePermission[]
+  umUserGalleryRolePermission umUserGalleryRolePermission[]
+  umUserImageRolePermission   umUserImageRolePermission[]
+  umUserSiteRolePermission    umUserSiteRolePermission[]
+
+  @@map("um_role_permission")
+}
+
+model umService {
+  serviceId   Int         @id @default(autoincrement()) @map("service_id")
+  serviceName String      @map("service_name") @db.VarChar(16)
+  umRequest   umRequest[]
+
+  @@map("um_service")
+}
+
+model umSession {
+  sessionId Int      @id @default(autoincrement()) @map("session_id")
+  userId    Int      @map("user_id")
+  siteId    Int      @map("site_id")
+  loginAt   DateTime @map("login_at") @db.Timestamp(6)
+  logoutAt  DateTime @map("logout_at") @db.Timestamp(6)
+  umSite    umSite   @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_site_id")
+  umUser    umUser   @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_user_id")
+
+  @@map("um_session")
+}
+
+model umSite {
+  siteId                      Int                           @id @default(autoincrement()) @map("site_id")
+  siteName                    String?                       @map("site_name") @db.VarChar(50)
+  siteDescription             String?                       @map("site_description") @db.VarChar(255)
+  siteApiKey                  String?                       @map("site_api_key") @db.VarChar(32)
+  statusId                    Int?                          @map("status_id")
+  createdAt                   DateTime?                     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                   DateTime?                     @default(now()) @map("updated_at") @db.Timestamp(6)
+  umAuthentication            umAuthentication[]
+  umCreationLog               umCreationLog[]
+  umDeletionLog               umDeletionLog[]
+  umModificationLog           umModificationLog[]
+  umOauthKey                  umOauthKey[]
+  umProviderSite              umProviderSite[]
+  umRequest                   umRequest[]
+  umRequestLog                umRequestLog[]
+  umSession                   umSession[]
+  umStatus                    umStatus?                     @relation(fields: [statusId], references: [statusId], onDelete: NoAction, map: "um_site_status_fk")
+  umSiteGalleryRolePermission umSiteGalleryRolePermission[]
+  umSitePayment               umSitePayment[]
+  umSiteReport                umSiteReport[]
+  umSiteSetting               umSiteSetting[]
+  umUserNotification          umUserNotification[]
+  umUserProfileFieldSite      umUserProfileFieldSite[]
+  umUserSiteRolePermission    umUserSiteRolePermission[]
+
+  @@map("um_site")
+}
+
+model umSiteGalleryRolePermission {
+  siteId           Int               @map("site_id")
+  galleryId        Int               @map("gallery_id")
+  rolePermissionId Int?              @map("role_permission_id")
+  umGallery        umGallery         @relation(fields: [galleryId], references: [galleryId], onDelete: SetNull, map: "fk_um_site_gallery_role_permission_um_gallery")
+  umSite           umSite            @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_um_site_gallery_role_permission_um_site")
+  umRolePermission umRolePermission? @relation(fields: [rolePermissionId], references: [rolePermissionId], onDelete: Restrict, map: "fk_um_site_gallery_role_um_role_permission")
+
+  @@id([siteId, galleryId])
+  @@map("um_site_gallery_role_permission")
+}
+
+model umSitePayment {
+  siteId          Int             @map("site_id")
+  paymentMethodId Int             @map("payment_method_id")
+  umPaymentMethod umPaymentMethod @relation(fields: [paymentMethodId], references: [paymentMethodId], onDelete: Cascade, map: "um_site_payment_payment_method_fk")
+  umSite          umSite          @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "um_site_payment_site_fk")
+
+  @@id([siteId, paymentMethodId])
+  @@map("um_site_payment")
+}
+
+model umSiteReport {
+  siteId    Int       @map("site_id")
+  reportId  Int       @map("report_id")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+  umReport  umReport  @relation(fields: [reportId], references: [reportId], onDelete: Cascade, map: "um_site_report_report_fk")
+  umSite    umSite    @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "um_site_report_site_fk")
+
+  @@id([siteId, reportId])
+  @@map("um_site_report")
+}
+
+model umSiteSetting {
+  funcId            Int               @map("func_id")
+  siteId            Int               @map("site_id")
+  isEnabled         Boolean?          @map("is_enabled")
+  umFunctionalities umFunctionalities @relation(fields: [funcId], references: [funcId], onDelete: Cascade, map: "um_site_setting_func_fk")
+  umSite            umSite            @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "um_site_setting_site_fk")
+
+  @@id([funcId, siteId])
+  @@map("um_site_setting")
+}
+
+model umSiteUserGroup {
+  siteUserGroupId          Int                       @id @default(autoincrement()) @map("site_user_group_id")
+  userSiteRolePermissionId Int?                      @map("user_site_role_permission_id")
+  groupId                  Int?                      @map("group_id")
+  umGroup                  umGroup?                  @relation(fields: [groupId], references: [groupId], onDelete: Cascade, map: "fk_site_user_group_group_id")
+  umUserSiteRolePermission umUserSiteRolePermission? @relation(fields: [userSiteRolePermissionId], references: [userSiteRolePermissionId], onDelete: Cascade, map: "fk_site_user_group_permission_id")
+
+  @@map("um_site_user_group")
+}
+
+model umStatus {
+  statusId          Int             @id @default(autoincrement()) @map("status_id")
+  statusType        String?         @map("status_type") @db.VarChar(64)
+  statusDescription String?         @map("status_description")
+  updatedOn         DateTime?       @default(now()) @map("updated_on") @db.Timestamp(6)
+  umAlbum           umAlbum[]
+  umImage           umImage[]
+  umInvitedUser     umInvitedUser[]
+  umSite            umSite[]
+  umTaskQueue       umTaskQueue[]
+  umUser            umUser[]
+
+  @@map("um_status")
+}
+
+model umTags {
+  tagId       Int           @id @default(autoincrement()) @map("tag_id")
+  tagName     String        @unique @map("tag_name") @db.VarChar
+  umImageTags umImageTags[]
+
+  @@map("um_tags")
+}
+
+model umTask {
+  taskId      Int            @id @default(autoincrement()) @map("task_id")
+  tableName   String         @map("table_name")
+  payload     Json?
+  priority    Prioritystatus @default(Low)
+  taskByUser  Int            @map("task_by_user")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  umUser      umUser         @relation(fields: [taskByUser], references: [userId])
+  umTaskQueue umTaskQueue[]
+
+  @@index([taskByUser], map: "um_task_taskbyuser_idx")
+  @@map("um_task")
+}
+
+model umTaskQueue {
+  taskQueueId Int      @id @default(autoincrement()) @map("task_queue_id")
+  taskId      Int      @map("task_id")
+  recordId    Int      @map("record_id")
+  statusId    Int      @map("status_id")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+  umStatus    umStatus @relation(fields: [statusId], references: [statusId])
+  umTask      umTask   @relation(fields: [taskId], references: [taskId])
+
+  @@index([statusId], map: "um_task_queue_statusid_idx")
+  @@map("um_task_queue")
+}
+
+model umUser {
+  userId                      Int                           @id @default(autoincrement()) @map("user_id")
+  email                       String?                       @unique @db.VarChar(255)
+  createdOn                   DateTime?                     @default(now()) @map("created_on") @db.Timestamp(6)
+  updatedOn                   DateTime?                     @default(now()) @map("updated_on") @db.Timestamp(6)
+  statusId                    Int?                          @map("status_id")
+  umAuthentication            umAuthentication[]
+  umCreationLog               umCreationLog[]
+  umDeletionLog               umDeletionLog[]
+  umForgotPassword            umForgotPassword[]
+  umModificationLog           umModificationLog[]
+  umRequestLog                umRequestLog[]
+  umResetUser                 umResetUser[]
+  umSession                   umSession[]
+  umTask                      umTask[]
+  umStatus                    umStatus?                     @relation(fields: [statusId], references: [statusId], onDelete: Restrict, map: "fk_user_status_id")
+  umUserAlbumRolePermission   umUserAlbumRolePermission[]
+  umUserGalleryRolePermission umUserGalleryRolePermission[]
+  umUserImageRolePermission   umUserImageRolePermission[]
+  umUserNotification          umUserNotification[]
+  umUserProfile               umUserProfile[]
+  umUserSiteRolePermission    umUserSiteRolePermission[]
+
+  @@map("um_user")
+}
+
+model umUserAlbumRolePermission {
+  userId            Int               @map("user_id")
+  albumId           Int               @map("album_id")
+  rolePermissionId  Int?              @map("role_permission_id")
+  uploadedTimestamp DateTime?         @default(now()) @map("uploaded_timestamp") @db.Timestamp(6)
+  umAlbum           umAlbum           @relation(fields: [albumId], references: [albumId], onDelete: Cascade, map: "fk_um_user_album_role_permission_um_album")
+  umRolePermission  umRolePermission? @relation(fields: [rolePermissionId], references: [rolePermissionId], onDelete: Restrict, map: "fk_um_user_album_role_permission_um_role_permission")
+  umUser            umUser            @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_um_user_album_role_permission_um_user")
+
+  @@id([userId, albumId])
+  @@map("um_user_album_role_permission")
+}
+
+model umUserGalleryRolePermission {
+  userId            Int               @map("user_id")
+  galleryId         Int               @map("gallery_id")
+  rolePermissionId  Int?              @map("role_permission_id")
+  uploadedTimestamp DateTime?         @default(now()) @map("uploaded_timestamp") @db.Timestamp(6)
+  umRolePermission  umRolePermission? @relation(fields: [rolePermissionId], references: [rolePermissionId], onDelete: Restrict, map: "fk_um_user_gallery_role_permission_um_role_permission")
+  umUser            umUser            @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_um_user_gallery_role_permission_um_user")
+  umGallery         umGallery         @relation(fields: [galleryId], references: [galleryId], onDelete: Cascade, map: "fk_um_user_gallery_role_um_gallery")
+
+  @@id([userId, galleryId])
+  @@map("um_user_gallery_role_permission")
+}
+
+model umUserImageRolePermission {
+  userId            Int               @map("user_id")
+  imageId           Int               @map("image_id")
+  rolePermissionId  Int?              @map("role_permission_id")
+  uploadedTimestamp DateTime?         @default(now()) @map("uploaded_timestamp") @db.Timestamp(6)
+  umImage           umImage           @relation(fields: [imageId], references: [imageId], onDelete: Cascade, map: "fk_um_user_image_role_permission_um_image")
+  umRolePermission  umRolePermission? @relation(fields: [rolePermissionId], references: [rolePermissionId], onDelete: Restrict, map: "fk_um_user_image_role_permission_um_role_permission")
+  umUser            umUser            @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_um_user_image_role_permission_um_user")
+
+  @@id([userId, imageId])
+  @@map("um_user_image_role_permission")
+}
+
+model umUserNotification {
+  notificationId         Int                    @id @default(autoincrement()) @map("notification_id")
+  userId                 Int                    @map("user_id")
+  siteId                 Int                    @map("site_id")
+  typeId                 Int                    @map("type_id")
+  content                String
+  categoryId             Int                    @map("category_id")
+  umNotificationCategory umNotificationCategory @relation(fields: [categoryId], references: [categoryId])
+  umSite                 umSite                 @relation(fields: [siteId], references: [siteId])
+  umNotificationType     umNotificationType     @relation(fields: [typeId], references: [typeId])
+  umUser                 umUser                 @relation(fields: [userId], references: [userId])
+
+  @@index([siteId], map: "um_user_notification_siteid_idx")
+  @@index([userId], map: "um_user_notification_userid_idx")
+  @@map("um_user_notification")
+}
+
+model umUserProfile {
+  profileId                 Int                         @id @default(autoincrement()) @map("profile_id")
+  profileName               String?                     @unique @map("profile_name") @db.VarChar(64)
+  profilePin                String?                     @map("profile_pin") @db.VarChar(6)
+  createdOn                 DateTime?                   @default(now()) @map("created_on") @db.Timestamp(6)
+  updatedOn                 DateTime?                   @default(now()) @map("updated_on") @db.Timestamp(6)
+  userId                    Int?                        @map("user_id")
+  umUser                    umUser?                     @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "fk_user_profile_user_id")
+  umUserProfileFieldDetails umUserProfileFieldDetails[]
+
+  @@map("um_user_profile")
+}
+
+model umUserProfileField {
+  fieldKeyId             Int                      @id @default(autoincrement()) @map("field_key_id")
+  fieldName              String?                  @unique @map("field_name") @db.VarChar(255)
+  umUserProfileFieldSite umUserProfileFieldSite[]
+
+  @@map("um_user_profile_field")
+}
+
+model umUserProfileFieldDetails {
+  profileId              Int                     @default(autoincrement()) @map("profile_id")
+  fieldKeyId             Int                     @map("field_key_id")
+  fieldValue             String?                 @map("field_value") @db.VarChar(255)
+  createdOn              DateTime?               @default(now()) @map("created_on") @db.Timestamp(6)
+  updatedOn              DateTime?               @default(now()) @map("updated_on") @db.Timestamp(6)
+  fieldSiteId            Int?                    @map("field_site_id")
+  umUserProfile          umUserProfile           @relation(fields: [profileId], references: [profileId], onDelete: Cascade, map: "fk_user_profile_field_details_profile_id")
+  umUserProfileFieldSite umUserProfileFieldSite? @relation(fields: [fieldSiteId], references: [fieldSiteId], onDelete: Cascade, map: "fk_user_profile_field_details_site_id")
+
+  @@id([profileId, fieldKeyId])
+  @@map("um_user_profile_field_details")
+}
+
+model umUserProfileFieldSite {
+  fieldSiteId               Int                         @id @default(autoincrement()) @map("field_site_id")
+  fieldKeyId                Int?                        @map("field_key_id")
+  siteId                    Int?                        @map("site_id")
+  umUserProfileFieldDetails umUserProfileFieldDetails[]
+  umUserProfileField        umUserProfileField?         @relation(fields: [fieldKeyId], references: [fieldKeyId], onDelete: Cascade, map: "fk_user_profile_field_site_key_id")
+  umSite                    umSite?                     @relation(fields: [siteId], references: [siteId], onDelete: Cascade, map: "fk_user_profile_field_site_site_id")
+
+  @@map("um_user_profile_field_site")
+}
+
+model umUserSiteRolePermission {
+  userSiteRolePermissionId Int               @id @default(autoincrement()) @map("user_site_role_permission_id")
+  userId                   Int?              @map("user_id")
+  siteId                   Int?              @map("site_id")
+  rolePermissionId         Int?              @map("role_permission_id")
+  umSiteUserGroup          umSiteUserGroup[]
+  umUser                   umUser?           @relation(fields: [userId], references: [userId], onDelete: Restrict, map: "fk_um_user_site_role_permission_um_user")
+  umRolePermission         umRolePermission? @relation(fields: [rolePermissionId], references: [rolePermissionId], onDelete: Restrict, map: "fk_um_user_site_role_um_role_permission")
+  umSite                   umSite?           @relation(fields: [siteId], references: [siteId], onDelete: Restrict, map: "fk_um_user_site_role_um_site")
+
+  @@map("um_user_site_role_permission")
+}
+
+enum PriorityStatus {
+  Low
+  Medium
+  High
+  Critical
+
+  @@map("priority_status")
+}
+
+enum StatusType {
+  ACTIVE
+  INACTIVE
+  SUSPENEDED
+  PENDING
+  REJECTED
+
+  @@map("status_type")
+}
+
+enum Prioritystatus {
+  Low
+  Medium
+  High
+  Critical
+
+  @@map("prioritystatus")
+}
