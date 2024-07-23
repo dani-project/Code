@@ -1,5 +1,35 @@
 const functionalitiesModel = require("../models/functionalitiesModel");
 
+//middleware to check functionality exists by func_id
+module.exports.chkFunctionalityExistsById = async (req, res, next) => {
+  try {
+    const { funcId } = req.params;
+    const functionality = await functionalitiesModel.getFunctionalityById(parseInt(funcId));
+    if (!functionality) {
+      res.status(404).json({ message: "Functionality Not Exists" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//middleware to check pfunc exists by pfunc_id
+module.exports.chkPfuncExistsById = async (req, res, next) => {
+  try {
+    const { pfuncId } = req.params;
+    const pfunc = await functionalitiesModel.getPfuncByPfuncId(parseInt(pfuncId));
+    if (!pfunc) {
+      res.status(404).json({ message: "Parent Functionality Not Exists" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 //to create new functionality
 module.exports.createFunctionality = async (req, res) => {
   try {
@@ -60,11 +90,11 @@ module.exports.getFunctionalitiesByPfuncId = async (req, res) => {
       res.status(200).json(functionalities);
     }
   } catch (error) {
-    if (error.message === "Parent Functionality Not Found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Parent Functionality Not Found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+//    }
   }
 };
 
@@ -102,11 +132,11 @@ module.exports.updateFunctionality = async (req, res) => {
 
     res.status(200).json(updatedFunctionality);
   } catch (error) {
-    if (error.message === "Functionality not found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Functionality not found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //}
   }
 };
 
@@ -117,11 +147,11 @@ module.exports.deleteFunctionality = async (req, res) => {
     const result = await functionalitiesModel.deleteFunctionality(parseInt(funcId));
     res.status(200).json(result);
   } catch (error) {
-    if (error.message === "Functionality not found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Functionality not found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //}
   }
 };
 

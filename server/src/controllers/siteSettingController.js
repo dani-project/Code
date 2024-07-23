@@ -1,5 +1,35 @@
 const siteSettingModel = require("../models/siteSettingModel");
 
+//middleware to check site exists by site_id
+module.exports.chkSiteExistsById = async (req, res, next) => {
+  try {
+    const { siteId } = req.params;
+    const site = await siteSettingModel.chkSiteBySiteId(parseInt(siteId));
+    if (!site) {
+      res.status(404).json({ message: "Requested Site Not Found" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//middleware to check siteSetting exists by siteId_funcId
+module.exports.chkSiteSettingExistsByIds = async (req, res, next) => {
+  try {
+    const { siteId, funcId } = req.params;
+    const siteSetting = await siteSettingModel.chkSiteSettingByIds(parseInt(siteId), parseInt(funcId));
+    if (!siteSetting) {
+      res.status(404).json({ message: "Site setting not found" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 //to create new setting
 module.exports.createNewSetting = async (req, res) => {
   try {
@@ -11,7 +41,7 @@ module.exports.createNewSetting = async (req, res) => {
     const newSetting = await siteSettingModel.createNewSetting({ siteId, funcId, isEnabled });
     res.status(201).json(newSetting);
   } catch (error) {
-    if (error.message === "Requested Site Not Found" || error.message === "Functionality Not Found" || error.message === "A site setting with this funcId and siteId already exists.") {
+    if (error.message === "A site setting with this funcId and siteId already exists.") {
       res.status(404).json({ message: error.message });
     } else {
       res.status(500).json({ message: error.message });
@@ -44,11 +74,11 @@ module.exports.getSiteSettingBySiteId = async (req, res) => {
       res.status(200).json(siteSetting);
     }
   } catch (error) {
-    if (error.message === "Requested Site Not Found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Requested Site Not Found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //}
   }
 };
 
@@ -63,11 +93,11 @@ module.exports.getSiteSettingBySiteIdFuncId = async (req, res) => {
       res.status(200).json(siteSetting);
     }
   } catch (error) {
-    if (error.message === "Requested Site Not Found" || error.message === "Functionality Not Found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Requested Site Not Found" || error.message === "Functionality Not Found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //  }
   }
 };
 
@@ -82,11 +112,11 @@ module.exports.getSiteSettingByFuncId = async (req, res) => {
       res.status(200).json(siteSetting);
     }
   } catch (error) {
-    if (error.message === "Functionality Not Found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Functionality Not Found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //}
   }
 };
 
@@ -103,11 +133,11 @@ module.exports.updateSiteSettingByIds = async (req, res) => {
     const updatedSiteSetting = await siteSettingModel.updateSiteSettingByIds(parseInt(siteId), parseInt(funcId), isEnabled);
     res.status(200).json(updatedSiteSetting);
   } catch (error) {
-    if (error.message === "Requested Site Not Found" || error.message === "Functionality not found" || error.message === "Site setting not found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Site setting not found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //}
   }
 };
 
@@ -118,10 +148,10 @@ module.exports.deleteSiteSettingByIds = async (req, res) => {
     const result = await siteSettingModel.deleteSiteSettingByIds(parseInt(siteId), parseInt(funcId));
     res.status(200).json(result);
   } catch (error) {
-    if (error.message === "Requested Site Not Found" || error.message === "Functionality not found" || error.message === "Site setting not found") {
-      res.status(404).json({ message: error.message });
-    } else {
+    // if (error.message === "Site setting not found") {
+    //   res.status(404).json({ message: error.message });
+    // } else {
       res.status(500).json({ message: error.message });
-    }
+    //}
   }
 };

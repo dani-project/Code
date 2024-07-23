@@ -7,9 +7,9 @@ const functionalitiesController = require("../controllers/functionalitiesControl
 router.post("/", functionalitiesController.createFunctionality);
 router.get("/", functionalitiesController.getAllFunctionalities);
 router.get("/:funcId", functionalitiesController.getFunctionalityById);
-router.get("/pfunc/:pfuncId", functionalitiesController.getFunctionalitiesByPfuncId);
+router.get("/pfunc/:pfuncId", functionalitiesController.chkPfuncExistsById, functionalitiesController.getFunctionalitiesByPfuncId);
 router.get("/pfuncName/:pfuncName", functionalitiesController.getAllFunctionalitiesByPfuncName);
-router.put("/:funcId", functionalitiesController.updateFunctionality);
-router.delete("/:funcId", functionalitiesController.deleteFunctionality);
+router.put("/:funcId", functionalitiesController.chkFunctionalityExistsById, functionalitiesController.updateFunctionality);
+router.delete("/:funcId", functionalitiesController.chkFunctionalityExistsById, functionalitiesController.deleteFunctionality);
 
 module.exports = router;
