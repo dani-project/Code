@@ -1,4 +1,5 @@
 const paymentModel = require("../models/paymentModel");
+const siteModel = require("../models/siteModel");
 
 //==============================================================//
 //                     Payment Controller                       //
@@ -155,5 +156,153 @@ module.exports.deletePaymentMethodByName = async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({ message: error.message });
+    }
+};
+
+
+// Check if Site exist using the Site ID
+module.exports.checkSiteExistenceByID = async (req, res, next) => {
+    const siteID = req.body.siteID;
+
+
+    if (!siteID){
+        return res.status(400).json({ message: "Site ID is required!" });
+    }
+
+    try {
+        const site = await siteModel.getSiteByID(siteID);
+        
+        if (!site) {
+            return res.status(404).json({ message: `Site ID: \'${siteID}\' not found!` });
+        } else {
+            next();
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+// Check if site is link with the payment method
+module.exports.checkSiteExistenceByID = async (req, res, next) => {
+    const siteID = req.body.siteID;
+
+
+    if (!siteID){
+        return res.status(400).json({ message: "Site ID is required!" });
+    }
+
+    try {
+        const site = await siteModel.getSiteByID(siteID);
+        
+        if (!site) {
+            return res.status(404).json({ message: `Site ID: \'${siteID}\' not found!` });
+        } else {
+            next();
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
+// Middleware to check if payment method already exists using the ID (Body)
+module.exports.checkPaymentMethodExistenceByIDInBody = async (req, res, next) => {
+    const paymentMethodID = req.body.paymentMethodID;
+
+    if (!paymentMethodID){
+        return res.status(400).json({ message: "Payment Method ID is required!" });
+    }
+
+    try {
+        const method = await paymentModel.getPaymentMethodByID(paymentMethodID);
+        if (!method) {
+            res.status(404).json({ message: `Payment method ID: ${paymentMethodID} not found!` });
+        } else {
+            next();
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+// Link payment method to Site (Post)
+module.exports.linkPaymentMethodToSite = async (req, res) => {
+    const { siteID, paymentMethodID } = req.body;
+
+    try {
+        const link = await paymentModel.linkPaymentMethodToSite(parseInt(siteID), parseInt(paymentMethodID));
+
+        return res.status(201).json({
+            status: 201,
+            message: 'Payment method successfully linked to site.',
+            data: link
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get Site payment methods by ID
+module.exports.getSitePaymentMethodsBySiteID = async (req, res) => {
+    const siteID = req.params.id;
+
+    try {
+        const paymentMethods = await paymentModel.getSitePaymentMethods(parseInt(siteID));
+
+        if (!paymentMethods || paymentMethods.length() === 0){
+            return res.status(404).json({ message: `Site ID: ${siteID} not found!` });
+        } else {
+            return res.status(200).json({
+                status: 200,
+                message: `Site ID: ${siteID} Payment methods retrieved successfully.`,
+                data: paymentMethods
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+// Check if payment method is linked with site
+module.exports.checkSitePaymentMethodExistence = async (req, res, next) => {
+    const {siteID, paymentMethodID} = req.body;
+
+    if (!paymentMethodID){
+        return res.status(400).json({ message: "Payment Method ID is required!" });
+    }
+
+    try {
+        const paymentMethod = await paymentModel.getSpecificSitePaymentMethod(parseInt(siteID), parseInt(paymentMethodID));
+
+        if (!paymentMethod){
+            return res.status(404).json({ message: `Payment Method ID: ${paymentMethodID} is not linked with Site ID: ${siteID}!` });
+        } else {
+            next();
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+// Delete payment method from site
+module.exports.deletePaymentMethodFromSite = async (req, res) => {
+    const {siteID, paymentMethodID} = req.body;
+
+    try {
+        const deletePaymentMethod = await paymentModel.deletePaymentMethodFromSite(parseInt(siteID), parseInt(paymentMethodID));
+
+        res.status(200).json({ message: `Payment Method ID: ${paymentMethodID} successfully deleted from Site ID: ${siteID}` });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
