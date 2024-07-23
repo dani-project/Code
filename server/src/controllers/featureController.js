@@ -1,7 +1,7 @@
 const featureModel = require("../models/featureModel");
 
 //==============================================================//
-//                    Feature Controller                    //
+//                    Feature Controller                        //
 //==============================================================//
 
 // Controller to get all features
