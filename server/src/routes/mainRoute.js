@@ -5,7 +5,7 @@ const featureRoute = require("./featureRoute");
 const pfuncRoute = require("./pfuncRoute");
 const paymentRoute = require("./paymentRoute");
 const functionalitiesRoute = require("./functionalitiesRoute");
-const reportRoute = require("./reportRoute");
+const reportRoute = require("./reportsRoute");
 
 //==============================================================//
 //                    Main Routes                        //
