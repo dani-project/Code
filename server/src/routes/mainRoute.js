@@ -5,7 +5,7 @@ const featureRoute = require("./featureRoute");
 const pfuncRoute = require("./pfuncRoute");
 const paymentRoute = require("./paymentRoute");
 const functionalitiesRoute = require("./functionalitiesRoute");
-const reportRoute = require("./reportRoute");
+const reportsRoute = require("./reportsRoute");
 
 //==============================================================//
 //                    Main Routes                        //
@@ -21,6 +21,6 @@ router.use("/payment", paymentRoute);
 // Functionalities Routes
 router.use("/functionalities", functionalitiesRoute);
 // Reports Routes
-router.use("/reports", reportRoute);
+router.use("/reports", reportsRoute);
 
 module.exports = router;
