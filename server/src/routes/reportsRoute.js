@@ -23,3 +23,6 @@ router.get("/:site_id/:report_id", reportsController.checkSiteReportEntry, repor
 router.get("/:site_id/reports", reportsController.checkSiteReportEntry, reportsController.getAllSiteReports);
 
 router.get("/sites-generated", reportsController.getSitesGeneratedReport);
+
+
+module.exports = router;
