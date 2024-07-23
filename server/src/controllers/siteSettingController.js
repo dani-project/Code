@@ -74,11 +74,7 @@ module.exports.getSiteSettingBySiteId = async (req, res) => {
       res.status(200).json(siteSetting);
     }
   } catch (error) {
-    // if (error.message === "Requested Site Not Found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //}
   }
 };
 
@@ -93,11 +89,7 @@ module.exports.getSiteSettingBySiteIdFuncId = async (req, res) => {
       res.status(200).json(siteSetting);
     }
   } catch (error) {
-    // if (error.message === "Requested Site Not Found" || error.message === "Functionality Not Found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //  }
   }
 };
 
@@ -112,11 +104,7 @@ module.exports.getSiteSettingByFuncId = async (req, res) => {
       res.status(200).json(siteSetting);
     }
   } catch (error) {
-    // if (error.message === "Functionality Not Found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //}
   }
 };
 
@@ -133,11 +121,7 @@ module.exports.updateSiteSettingByIds = async (req, res) => {
     const updatedSiteSetting = await siteSettingModel.updateSiteSettingByIds(parseInt(siteId), parseInt(funcId), isEnabled);
     res.status(200).json(updatedSiteSetting);
   } catch (error) {
-    // if (error.message === "Site setting not found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //}
   }
 };
 
@@ -148,10 +132,6 @@ module.exports.deleteSiteSettingByIds = async (req, res) => {
     const result = await siteSettingModel.deleteSiteSettingByIds(parseInt(siteId), parseInt(funcId));
     res.status(200).json(result);
   } catch (error) {
-    // if (error.message === "Site setting not found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //}
   }
 };

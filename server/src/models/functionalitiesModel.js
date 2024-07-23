@@ -43,15 +43,6 @@ module.exports.getPfuncByPfuncId = async (pfuncId) => {
 
 //to get all functionalities by parent functionality id
 module.exports.getFunctionalitiesByPfuncId = async (pfuncId) => {
-  // const pfunc = await prisma.umParentFunctionalities.findUnique({
-  //   where: { pfuncId },
-  //   select: { pfuncId: true }
-  // });
-
-  // if (!pfunc) {
-  //   throw new Error("Parent Functionality Not Found");
-  // }
-
   const functionalities = await prisma.umFunctionalities.findMany({
     where: { pfuncId },
   });
@@ -75,13 +66,6 @@ module.exports.getAllFunctionalitiesByPfuncName = async (pfuncName) => {
 
 //to update a functionality by funcId
 module.exports.updateFunctionality = async (funcId, updateData) => {
-  // const functionality = await prisma.umFunctionalities.findUnique({
-  //   where: { funcId },
-  // });
-  // if (!functionality) {
-  //   throw new Error("Functionality not found");
-  // }
-
   const updatedFunctionality = await prisma.umFunctionalities.update({
     where: { funcId },
     data: updateData,
@@ -91,13 +75,6 @@ module.exports.updateFunctionality = async (funcId, updateData) => {
 
 //to delete a functionality by funcId
 module.exports.deleteFunctionality = async (funcId) => {
-  // const functionality = await prisma.umFunctionalities.findUnique({
-  //   where: { funcId },
-  // });
-  // if (!functionality) {
-  //   throw new Error("Functionality not found");
-  // }
-
   await prisma.umFunctionalities.delete({
     where: { funcId },
   });

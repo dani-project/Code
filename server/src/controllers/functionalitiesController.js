@@ -90,11 +90,7 @@ module.exports.getFunctionalitiesByPfuncId = async (req, res) => {
       res.status(200).json(functionalities);
     }
   } catch (error) {
-    // if (error.message === "Parent Functionality Not Found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-//    }
   }
 };
 
@@ -132,11 +128,7 @@ module.exports.updateFunctionality = async (req, res) => {
 
     res.status(200).json(updatedFunctionality);
   } catch (error) {
-    // if (error.message === "Functionality not found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //}
   }
 };
 
@@ -147,11 +139,7 @@ module.exports.deleteFunctionality = async (req, res) => {
     const result = await functionalitiesModel.deleteFunctionality(parseInt(funcId));
     res.status(200).json(result);
   } catch (error) {
-    // if (error.message === "Functionality not found") {
-    //   res.status(404).json({ message: error.message });
-    // } else {
       res.status(500).json({ message: error.message });
-    //}
   }
 };
 

@@ -77,13 +77,6 @@ module.exports.getAllSiteSetting = async () => {
 
 //to get site setting by site_id
 module.exports.getSiteSettingBySiteId = async (siteId) => {
-  // const site = await prisma.umSite.findUnique({
-  //   where: { siteId },
-  // });
-  // if (!site) {
-  //   throw new Error("Requested Site Not Found");
-  // }
-
   const siteSettings = await prisma.umSiteSetting.findMany({
     where: { siteId },
   });
@@ -92,19 +85,6 @@ module.exports.getSiteSettingBySiteId = async (siteId) => {
 
 //to get site setting by site_id and func_id
 module.exports.getSiteSettingBySiteIdFuncId = async (siteId, funcId) => {
-  // const site = await prisma.umSite.findUnique({
-  //   where: { siteId },
-  // });
-  // if (!site) {
-  //   throw new Error("Requested Site Not Found");
-  // }
-  // const func = await prisma.umFunctionalities.findUnique({
-  //   where: { funcId },
-  // });
-  // if (!func) {
-  //   throw new Error("Functionality Not Found");
-  // }
-
   const siteSettings = await prisma.umSiteSetting.findMany({
     where: {
       siteId: siteId,
@@ -116,12 +96,6 @@ module.exports.getSiteSettingBySiteIdFuncId = async (siteId, funcId) => {
 
 //to get site setting by func_id
 module.exports.getSiteSettingByFuncId = async (funcId) => {
-  // const func = await prisma.umFunctionalities.findUnique({
-  //   where: { funcId },
-  // });
-  // if (!func) {
-  //   throw new Error("Functionality Not Found");
-  // }
   const siteSettings = await prisma.umSiteSetting.findMany({
     where: { funcId },
   });
@@ -130,32 +104,6 @@ module.exports.getSiteSettingByFuncId = async (funcId) => {
 
 //to update isEnabled status of an API setting
 module.exports.updateSiteSettingByIds = async (siteId, funcId, isEnabled) => {
-  // const site = await prisma.umSite.findUnique({
-  //   where: { siteId },
-  // });
-  // if (!site) {
-  //   throw new Error("Requested Site Not Found");
-  // }
-
-  // const func = await prisma.umFunctionalities.findUnique({
-  //   where: { funcId },
-  // });
-  // if (!func) {
-  //   throw new Error("Functionality Not Found");
-  // }
-
-  // const existingSetting = await prisma.umSiteSetting.findUnique({
-  //   where: {
-  //     funcId_siteId: {
-  //       funcId: parseInt(funcId),
-  //       siteId: parseInt(siteId),
-  //     },
-  //   },
-  // });
-  // if (!existingSetting) {
-  //   throw new Error("Site setting not found");
-  // }
-
   // const updatedSetting = await prisma.umSiteSetting.update({
   //   where: {
   //     funcId_siteId: {
@@ -179,32 +127,6 @@ module.exports.updateSiteSettingByIds = async (siteId, funcId, isEnabled) => {
 
 //to delete site setting by site_id and func_id
 module.exports.deleteSiteSettingByIds = async (siteId, funcId) => {
-  // const site = await prisma.umSite.findUnique({
-  //   where: { siteId },
-  // });
-  // if (!site) {
-  //   throw new Error("Requested Site Not Found");
-  // }
-
-  // const func = await prisma.umFunctionalities.findUnique({
-  //   where: { funcId },
-  // });
-  // if (!func) {
-  //   throw new Error("Functionality Not Found");
-  // }
-
-  // const existingSetting = await prisma.umSiteSetting.findUnique({
-  //   where: {
-  //     funcId_siteId: {
-  //       funcId: parseInt(funcId),
-  //       siteId: parseInt(siteId),
-  //     },
-  //   },
-  // });
-  // if (!existingSetting) {
-  //   throw new Error("Site setting not found");
-  // }
-
   await prisma.umSiteSetting.delete({
     where: {
       funcId_siteId: {
