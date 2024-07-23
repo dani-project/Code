@@ -4,6 +4,25 @@ const pfuncModel = require("../models/pfuncModel");
 //                    Parent Functionalities Controller                    //
 //==============================================================//
 
+// Controller to check parent functionality by id
+module.exports.chkParentFunctionalityExists = async (req, res) => {
+    const { pfunc_id } = req.params;
+    if (!pfunc_id) {
+        res.status(400).json({ message: "pfunc_id is undefined." });
+        return;
+    }
+    try {
+        const pfunc = await pfuncModel.getParentFunctionalityById(pfunc_id);
+        if (!pfunc) {
+            res.status(404).json({ message: "No parent functionality found" });
+        } else {
+            next();
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Controller to get all parent functionalities
 module.exports.readAllParentFunctionalities = async (req, res) => {
     try {
@@ -52,11 +71,7 @@ module.exports.createParentFunctionality = async (req, res) => {
 module.exports.updateParentFunctionalityById = async (req, res) => {
     const { pfunc_id } = req.params;
     const { pfunc_name } = req.body;
-    if (!pfunc_id) {
-        res.status(400).json({ message: "pfunc_id is undefined." });
-        return;
-    }
-    else if (!pfunc_name || pfunc_name.trim() === "") {
+    if (!pfunc_name || pfunc_name.trim() === "") {
         res.status(400).json({ message: "pfunc_name is undefined." });
         return;
     }
@@ -71,10 +86,6 @@ module.exports.updateParentFunctionalityById = async (req, res) => {
 // Controller to delete parent functionality by id
 module.exports.deleteParentFunctionalityById = async (req, res) => {
     const { pfunc_id } = req.params;
-    if (!pfunc_id) {
-        res.status(400).json({ message: "pfunc_id is undefined." });
-        return;
-    }
     try {
         await pfuncModel.deleteParentFunctionalityById(pfunc_id);
         res.status(204).send();
@@ -82,3 +93,19 @@ module.exports.deleteParentFunctionalityById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Controller to get parent functionality by feature id
+module.exports.readALLParentFunctionalitiesByFeatureId = async (req, res) => {
+    const { feature_id } = req.params;
+    try {
+        const pfuncs = await pfuncModel.getALLParentFunctionalitiesByFeatureId(feature_id);
+        if (!pfuncs) {
+            res.status(404).json({ message: "No parent functionality found" });
+        } else {
+            res.status(200).json(pfuncs);
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+

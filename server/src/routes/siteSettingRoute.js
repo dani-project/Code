@@ -9,6 +9,8 @@ router.get("/", siteSettingController.getAllSiteSetting);
 router.get("/:siteId", siteSettingController.getSiteSettingBySiteId);
 router.get("/:siteId/func/:funcId", siteSettingController.getSiteSettingBySiteIdFuncId);
 router.get("/func/:funcId", siteSettingController.getSiteSettingByFuncId);
+
+// PUT "api/:siteId/func/:funcId" to enable on/off functionalities
 router.put("/:siteId/func/:funcId", siteSettingController.updateSiteSettingByIds);
 router.delete("/:siteId/func/:funcId", siteSettingController.deleteSiteSettingByIds);
 

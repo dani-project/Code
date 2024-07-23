@@ -3,7 +3,7 @@ const router = express.Router();
 const pfuncController = require("../controllers/pfuncController.js");
 
 //==============================================================//
-//                    Feature Routes                        //
+//                    Feature Routes                            //
 //==============================================================//
 
 // GET /api/pfunc
@@ -13,9 +13,11 @@ router.get("/:pfunc_id", pfuncController.readParentFunctionalityById);
 // POST /api/pfunc
 router.post("/", pfuncController.createParentFunctionality);
 // PUT /api/pfunc/id
-router.put("/:pfunc_id", pfuncController.updateParentFunctionalityById);
+router.put("/:pfunc_id", pfuncController.chkParentFunctionalityExists, pfuncController.updateParentFunctionalityById);
 // DELETE /api/pfunc/id
-router.delete("/:pfunc_id", pfuncController.deleteParentFunctionalityById);
+router.delete("/:pfunc_id", pfuncController.chkParentFunctionalityExists, pfuncController.deleteParentFunctionalityById);
+// GET /api/pfunc/feature_id
+router.get("/feature_id", pfuncController.readALLParentFunctionalitiesByFeatureId)
 
 
 module.exports = router;

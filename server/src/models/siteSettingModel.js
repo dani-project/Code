@@ -109,42 +109,51 @@ module.exports.getSiteSettingByFuncId = async (funcId) => {
 
 //to update isEnabled status of an API setting
 module.exports.updateSiteSettingByIds = async (siteId, funcId, isEnabled) => {
-  const site = await prisma.umSite.findUnique({
-    where: { siteId },
-  });
-  if (!site) {
-    throw new Error("Requested Site Not Found");
-  }
+  // const site = await prisma.umSite.findUnique({
+  //   where: { siteId },
+  // });
+  // if (!site) {
+  //   throw new Error("Requested Site Not Found");
+  // }
 
-  const func = await prisma.umFunctionalities.findUnique({
-    where: { funcId },
-  });
-  if (!func) {
-    throw new Error("Functionality Not Found");
-  }
+  // const func = await prisma.umFunctionalities.findUnique({
+  //   where: { funcId },
+  // });
+  // if (!func) {
+  //   throw new Error("Functionality Not Found");
+  // }
 
-  const existingSetting = await prisma.umSiteSetting.findUnique({
-    where: {
-      funcId_siteId: {
-        funcId: parseInt(funcId),
-        siteId: parseInt(siteId),
-      },
-    },
-  });
-  if (!existingSetting) {
-    throw new Error("Site setting not found");
-  }
+  // const existingSetting = await prisma.umSiteSetting.findUnique({
+  //   where: {
+  //     funcId_siteId: {
+  //       funcId: parseInt(funcId),
+  //       siteId: parseInt(siteId),
+  //     },
+  //   },
+  // });
+  // if (!existingSetting) {
+  //   throw new Error("Site setting not found");
+  // }
 
-  const updatedSetting = await prisma.umSiteSetting.update({
-    where: {
-      funcId_siteId: {
-        funcId: parseInt(funcId),
-        siteId: parseInt(siteId),
-      },
-    },
-    data: { isEnabled },
-  });
-  return updatedSetting;
+  // const updatedSetting = await prisma.umSiteSetting.update({
+  //   where: {
+  //     funcId_siteId: {
+  //       funcId: parseInt(funcId),
+  //       siteId: parseInt(siteId),
+  //     },
+  //   },
+  //   data: { isEnabled },
+  // });
+  // return updatedSetting;
+
+  try {
+    await prisma.$executeRaw`
+        CALL enable_functionality(${parseInt(siteId)}, ${parseInt(funcId)}, ${isEnabled});
+    `;
+    return { message: 'Site setting updated successfully' };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 //to delete site setting by site_id and func_id
