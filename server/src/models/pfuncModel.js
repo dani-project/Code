@@ -42,3 +42,11 @@ module.exports.deleteParentFunctionalityById = async (pfunc_id) => {
         where: { pfuncId: parseInt(pfunc_id) },
     });
 };
+
+// Prima ORM query to get parent functionality by id
+module.exports.getALLParentFunctionalitiesByFeatureId = async (feature_id) => {
+    const pfuncs = await prisma.umParentFunctionalities.findMany({
+        where: { featureId: parseInt(feature_id) },
+    });
+    return pfuncs;
+};

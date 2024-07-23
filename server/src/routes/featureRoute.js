@@ -13,9 +13,9 @@ router.get("/:feature_id", featureController.readFeatureById);
 // POST /api/feature
 router.post("/", featureController.createFeature);
 // PUT /api/feature/id
-router.put("/:feature_id", featureController.updateFeatureById);
+router.put("/:feature_id", featureController.chkFeatureExists, featureController.updateFeatureById);
 // DELETE /api/feature/id
-router.delete("/:feature_id", featureController.deleteFeatureById);
+router.delete("/:feature_id", featureController.chkFeatureExists, featureController.deleteFeatureById);
 
 
 module.exports = router;

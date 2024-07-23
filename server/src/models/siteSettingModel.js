@@ -156,16 +156,25 @@ module.exports.updateSiteSettingByIds = async (siteId, funcId, isEnabled) => {
   //   throw new Error("Site setting not found");
   // }
 
-  const updatedSetting = await prisma.umSiteSetting.update({
-    where: {
-      funcId_siteId: {
-        funcId: parseInt(funcId),
-        siteId: parseInt(siteId),
-      },
-    },
-    data: { isEnabled },
-  });
-  return updatedSetting;
+  // const updatedSetting = await prisma.umSiteSetting.update({
+  //   where: {
+  //     funcId_siteId: {
+  //       funcId: parseInt(funcId),
+  //       siteId: parseInt(siteId),
+  //     },
+  //   },
+  //   data: { isEnabled },
+  // });
+  // return updatedSetting;
+
+  try {
+    await prisma.$executeRaw`
+        CALL enable_functionality(${parseInt(siteId)}, ${parseInt(funcId)}, ${isEnabled});
+    `;
+    return { message: 'Site setting updated successfully' };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 //to delete site setting by site_id and func_id
