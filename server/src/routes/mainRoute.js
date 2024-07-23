@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const siteRoute = require("./siteRoute");
 const featureRoute = require("./featureRoute");
 const pfuncRoute = require("./pfuncRoute");
 const paymentRoute = require("./paymentRoute");
@@ -9,6 +10,8 @@ const reportRoute = require("./reportRoute");
 //==============================================================//
 //                    Main Routes                        //
 //==============================================================//
+// Feature Routes
+router.use("/sites", siteRoute);
 // Feature Routes
 router.use("/feature", featureRoute);
 // Parent Functionalities Routes
